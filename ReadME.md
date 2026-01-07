@@ -1,14 +1,21 @@
 ## Requirements
 
-### Installation and Startup Instructions
-Create a virtual enviornment and install the relevant dependencies using:
-"pip install -r requirements.txt"
-
-To run the application, use:
-`python app.py`
 
 ### Dependencies
 - Python 3.x
 - Flask
 - google-cloud-datastore
 - requests
+
+### Setting up the Environment
+This project requires use of a Google Cloud account and the Google Cloud cli. More information on setting up the Google Cloud cli can be found [here](https://cloud.google.com/sdk/docs/install).
+
+### Installation and Startup Instructions
+Create a virtual environment and install the relevant dependencies using:
+`pip install -r requirements.txt`
+
+To run the application, use:
+`python app.py`
+
+### Notes
+This application will use port 8080 for the local API server. The front end runs on port 3000, the default port for Vite React applications.
