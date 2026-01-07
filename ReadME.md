@@ -7,4 +7,8 @@ pip install -r requirements.txt
 To run the application, use:
 python app.py
 
-## Requirements
+### Dependencies
+- Python 3.x
+- Flask
+- google-cloud-datastore
+- requests
