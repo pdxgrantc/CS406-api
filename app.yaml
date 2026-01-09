@@ -1,2 +1,8 @@
 runtime: python311
+service: api
 entrypoint: gunicorn -b :$PORT main:app
+
+
+env_variables:
+  FIRESTORE_DATABASE_ID: "cs406-budget"
+  GOOGLE_CLOUD_PROJECT: "cs406-project-483720"

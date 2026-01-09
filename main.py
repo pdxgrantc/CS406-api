@@ -1,21 +1,74 @@
-from flask import Flask, request
+import os
+from datetime import datetime, timezone
+
+from flask import Flask, request, jsonify
+from flask_cors import CORS
+from google.cloud import firestore
 
 app = Flask(__name__)
 
+# Allow requests from your frontend (adjust as needed)
+CORS(app, resources={r"/*": {"origins": ["http://localhost:3000", "https://web-dot-YOUR-PROJECT.uc.r.appspot.com"]}})
 
-@app.route('/')
+# Firestore client (uses ADC / service account)
+db = firestore.Client()
+
+def utc_now_iso() -> str:
+    return datetime.now(timezone.utc).isoformat()
+
+
+@app.route("/")
 def index():
-	return 'Hello from CS-406 API', 200
+	return "Hello, World!"
 
-
-@app.route('/login', methods=['GET', 'POST'])
+@app.post("/login")
 def login():
-	# For now, just return a simple text response.
-	# In a real app you'd validate credentials here.
-	return 'Login page', 200
+    """
+    Receives user data from frontend and stores it in Firestore.
 
+    Expected JSON body (example):
+    {
+      "sub": "google-user-id",
+      "email": "user@example.com",
+      "name": "User Name",
+      "picture": "https://...."
+    }
+    """
+    data = request.get_json(silent=True) or {}
 
-if __name__ == '__main__':
-	# Use port 8080 to be compatible with common cloud runtimes.
-	app.run(host='0.0.0.0', port=8080)
+    sub = data.get("sub")
+    if not sub:
+        return jsonify({"error": "Missing required field: sub"}), 400
 
+    # Only allow fields you actually want to store (prevents junk writes)
+    user_doc = {
+        "sub": sub,
+        "updatedAt": utc_now_iso(),
+        "lastLoginAt": utc_now_iso(),
+        "given_name": data.get("given_name"),
+        "family_name": data.get("family_name"),
+        "email": data.get("email"),
+        "picture" : data.get("picture") 
+    }
+
+	
+
+    # Use sub as the document id so it’s unique per Google account
+    ref = db.collection("users").document(sub)
+
+    # Upsert:
+    # - if doc exists: update fields
+    # - if doc doesn’t exist: create it
+    # Also set createdAt only on first creation
+    ref.set(
+        {
+            **user_doc,
+            "createdAt": firestore.SERVER_TIMESTAMP,  # set once when created
+        },
+        merge=True
+    )
+
+    return jsonify({"status": "ok", "user_id": sub}), 200
+
+if __name__ == "__main__":
+    app.run(host="127.0.0.1", port=8080, debug=True)
