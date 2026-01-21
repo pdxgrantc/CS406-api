@@ -34,9 +34,13 @@ def login():
       "picture": "https://...."
     }
     """
-    data = request.get_json(silent=True) or {}
+    req = request.get_json(silent=True) or {}
+    data = req.get("data")
+
+    print(f"Received login data: {data}")
 
     sub = data.get("sub")
+    print (f"sub: {sub}")
     if not sub:
         return jsonify({"error": "Missing required field: sub"}), 400
 
@@ -48,7 +52,8 @@ def login():
         "given_name": data.get("given_name"),
         "family_name": data.get("family_name"),
         "email": data.get("email"),
-        "picture" : data.get("picture") 
+        "picture" : data.get("picture"), 
+        "name": data.get("name")
     }
 
 	
