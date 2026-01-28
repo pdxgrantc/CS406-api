@@ -8,7 +8,7 @@ from google.cloud import firestore
 app = Flask(__name__)
 
 # Allow requests from your frontend (adjust as needed)
-CORS(app, resources={r"/*": {"origins": ["http://localhost:3000", "https://web-dot-YOUR-PROJECT.uc.r.appspot.com"]}})
+CORS(app, resources={r"/*": {"origins": ["http://localhost:3000", "https://web-dot-cs406-project-483720.uc.r.appspot.com"]}})
 
 # Firestore client (uses ADC / service account)
 db = firestore.Client()
