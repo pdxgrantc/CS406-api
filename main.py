@@ -37,14 +37,11 @@ def login():
     req = request.get_json(silent=True) or {}
     data = req.get("data")
 
-    print(f"Received login data: {data}")
-
     sub = data.get("sub")
-    print (f"sub: {sub}")
     if not sub:
         return jsonify({"error": "Missing required field: sub"}), 400
 
-    # Only allow fields you actually want to store (prevents junk writes)
+    # Only allow fields you actually want to store (5events junk writes)
     user_doc = {
         "sub": sub,
         "updatedAt": utc_now_iso(),
