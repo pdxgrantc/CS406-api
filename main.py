@@ -5,7 +5,17 @@ from flask import Flask, request, jsonify
 from flask_cors import CORS
 from google.cloud import firestore
 
-app = Flask(__name__)
+
+def create_app():
+    app = Flask(__name__)
+
+    # register blueprints
+    from routes import blueprints
+    for bp in blueprints:
+        app.register_blueprint(bp)
+    return app
+
+app = create_app()
 
 # Allow requests from your frontend (adjust as needed)
 CORS(app, resources={r"/*": {"origins": ["http://localhost:3000", "https://web-dot-cs406-project-483720.uc.r.appspot.com"]}})
